@@ -102,7 +102,6 @@
             MinimizeBox = false;
             Name = "MainForm";
             Text = "Library system";
-            Activated += MainForm_Activated;
             ((System.ComponentModel.ISupportInitialize)dataGridViewBooks).EndInit();
             ResumeLayout(false);
             PerformLayout();

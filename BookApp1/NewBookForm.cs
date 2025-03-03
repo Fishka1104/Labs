@@ -21,22 +21,22 @@ namespace BookApp1
         private void btnOk_Click(object sender, EventArgs e)
         {
             SaveBookData();
-            GotoMainForm();
+            this.Close();
         }
 
-        void SaveBookData()          //дані з текстових полів txtTitle, txtIsbn... записуються у новий об'єкт Book
+        void SaveBookData()
         {
-            Book book = new Book();
-            book.Title = txtTitle.Text;
-            book.Isbn = txtIsbn.Text;
-            book.PublisherName = txtPublisher.Text;
-            book.AuthorName = txtAuthor.Text;
-            book.CategoryName = txtCategory.Text;
-            book.CreateBook(book);   //Викликається щоб зберегти книгу у books.json
-        }
-        void GotoMainForm()
-        {
-            this.Close(); //після додавання книга зберігається і форма закривається
+            Book book = new Book
+            {
+                Title = txtTitle.Text,
+                Isbn = new Isbn { Code = txtIsbn.Text },
+                Publisher = new Publisher { Name = txtPublisher.Text },
+                Author = new Author { FullName = txtAuthor.Text },
+                Category = new Category { Name = txtCategory.Text }
+            };
+
+            book.CreateBook(book);
         }
     }
 }
+
