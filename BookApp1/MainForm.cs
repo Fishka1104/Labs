@@ -92,6 +92,7 @@ namespace BookApp1
         private void textBoxFilter_TextChanged(object sender, EventArgs e)
         {
             string filterText = textBoxFilter.Text.Trim().ToLower();
+
             List<Book> books = new Book().GetBooks();
 
             var filteredBooks = books.Where(book =>
@@ -115,10 +116,28 @@ namespace BookApp1
                     book.Publisher.Name,
                     book.Category.Name
                 );
+
+
+            foreach (DataGridViewRow row in dataGridViewBooks.Rows)
+            {
+                if (row.IsNewRow) continue; 
+
+                bool visible = false;
+                for (int i = 0; i < row.Cells.Count; i++)
+                {
+                    if (row.Cells[i].Value != null && row.Cells[i].Value.ToString().ToLower().Contains(filterText))
+                    {
+                        visible = true;
+                        break;
+                    }
+                }
+                row.Visible = visible;
+
             }
         }
     }
 }
+
 
 
 
