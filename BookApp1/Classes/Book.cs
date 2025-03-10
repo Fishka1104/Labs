@@ -1,17 +1,20 @@
-﻿using System.Text.Json;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
+using System.Text.Json;
 
 namespace BookApp1.Classes
 {
-    public class Book   //клас Book працює з JSON-файлом books.json де зберігаються всі книги
+    public class Book : BaseEntity, IBookOperations
     {
-        public int BookId { get; set; }
-        public string? Title { get; set; }
-        public string? Isbn { get; set; }
-        public string? PublisherName { get; set; }
-        public string? AuthorName { get; set; }
-        public string? CategoryName { get; set; }   //кожна книга має BookId Title Isbn PublisherName AuthorName та CategoryName
+        public string Title { get; set; }
+        public Isbn Isbn { get; set; }
+        public Publisher Publisher { get; set; }
+        public Author Author { get; set; }
+        public Category Category { get; set; }
+
+        public int BookId => Id;
 
         private static string filePath = "books.json";
 
@@ -19,10 +22,18 @@ namespace BookApp1.Classes
         {
             if (!File.Exists(filePath)) return new List<Book>();
             string json = File.ReadAllText(filePath);
-            return JsonSerializer.Deserialize<List<Book>>(json) ?? new List<Book>();
+
+            var options = new JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true, 
+                IncludeFields = true,              
+                WriteIndented = true
+            };
+
+            return JsonSerializer.Deserialize<List<Book>>(json, options) ?? new List<Book>();
         }
 
-        private static void SaveBooks(List<Book> books)   //ккщо books.json існує він читається і перетворюється у список List<Book>
+        private static void SaveBooks(List<Book> books)
         {
             string json = JsonSerializer.Serialize(books, new JsonSerializerOptions { WriteIndented = true });
             File.WriteAllText(filePath, json);
@@ -33,23 +44,18 @@ namespace BookApp1.Classes
             return LoadBooks();
         }
 
-        public void CreateBook(Book book) //кожній новій книзі призначається BookId, і вона додається до списку
+        public void CreateBook(Book book)
         {
             var books = LoadBooks();
-            book.BookId = books.Count > 0 ? books[^1].BookId + 1 : 1; //генеруємо ID
+            book.Id = books.Count > 0 ? books[^1].Id + 1 : 1; 
             books.Add(book);
             SaveBooks(books);
         }
 
-        public Book? GetBookData(int bookId)
-        {
-            return LoadBooks().Find(b => b.BookId == bookId);
-        }
-
-        public void EditBook(Book book) //книга знаходиться за BookId та оновлюється
+        public void EditBook(Book book)
         {
             var books = LoadBooks();
-            var index = books.FindIndex(b => b.BookId == book.BookId);
+            var index = books.FindIndex(b => b.Id == book.Id);
             if (index != -1)
             {
                 books[index] = book;
@@ -57,11 +63,23 @@ namespace BookApp1.Classes
             }
         }
 
-        public void DeleteBook(int bookId)  //книга видаляється зі списку за BookId
+        public void DeleteBook(int bookId)
         {
             var books = LoadBooks();
-            books.RemoveAll(b => b.BookId == bookId);
+            books.RemoveAll(b => b.Id == bookId);
             SaveBooks(books);
+        }
+
+        public static Book? GetBookData(int bookId)
+        {
+            return LoadBooks().FirstOrDefault(b => b.Id == bookId);
+        }
+
+        public override void DisplayInfo()
+        {
+            Console.WriteLine($"Book: {Title}, ISBN: {Isbn.Code}, Author: {Author.FullName}, Publisher: {Publisher.Name}, Category: {Category.Name}");
         }
     }
 }
+
+

@@ -15,41 +15,60 @@ namespace BookApp1
     public partial class EditBookForm : Form
     {
         int selectedBookId;
-        public EditBookForm(int bookId)
+
+        private Book currentBook;
+
+        public EditBookForm(Book book) 
         {
             InitializeComponent();
-            selectedBookId = bookId;
-            GetBookData();
+            currentBook = book;
+            txtTitle.Text = book.Title;
+            txtIsbn.Text = book.Isbn?.Code;
+            txtPublisher.Text = book.Publisher?.Name;
+            txtAuthor.Text = book.Author?.FullName;
+            txtCategory.Text = book.Category?.Name;
         }
 
         private void btnOk_Click(object sender, EventArgs e)
         {
-            EditBookData();
+            currentBook.Title = txtTitle.Text;
+            currentBook.Isbn.Code = txtIsbn.Text;
+            currentBook.Publisher.Name = txtPublisher.Text;
+            currentBook.Author.FullName = txtAuthor.Text;
+            currentBook.Category.Name = txtCategory.Text;
+
+            currentBook.EditBook(currentBook); 
+
             this.Close();
         }
 
-        void GetBookData()    //ця форма відкривається для редагування книги
+        void GetBookData()
         {
-            Book book = new Book();
-            book = book.GetBookData(selectedBookId); //знаходить книгу у books.json і заповнює текстові поля
-            txtTitle.Text = book.Title;
-            txtIsbn.Text = book.Isbn;
-            txtPublisher.Text = book.PublisherName;
-            txtAuthor.Text = book.AuthorName;
-            txtCategory.Text = book.CategoryName;
+            Book? book = Book.GetBookData(selectedBookId); 
+            if (book != null)
+            {
+                txtTitle.Text = book.Title;
+                txtIsbn.Text = book.Isbn?.Code;
+                txtPublisher.Text = book.Publisher?.Name;
+                txtAuthor.Text = book.Author?.FullName;
+                txtCategory.Text = book.Category?.Name;
+            }
         }
 
-        void EditBookData()  //нові дані зберігаються в books.json через EditBook(book)
+        void EditBookData()
         {
-            Book book = new Book();
-            book.BookId = selectedBookId;
-            book.Title = txtTitle.Text;
-            book.Isbn = txtIsbn.Text;
-            book.PublisherName = txtPublisher.Text;
-            book.AuthorName = txtAuthor.Text;
-            book.CategoryName = txtCategory.Text;
+            Book book = new Book
+            {
+                Id = selectedBookId,
+                Title = txtTitle.Text,
+                Isbn = new Isbn { Code = txtIsbn.Text },
+                Publisher = new Publisher { Name = txtPublisher.Text },
+                Author = new Author { FullName = txtAuthor.Text },
+                Category = new Category { Name = txtCategory.Text }
+            };
+
             book.EditBook(book);
         }
-
     }
 }
+
