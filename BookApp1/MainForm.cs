@@ -93,6 +93,31 @@ namespace BookApp1
         {
             string filterText = textBoxFilter.Text.Trim().ToLower();
 
+            List<Book> books = new Book().GetBooks();
+
+            var filteredBooks = books.Where(book =>
+                book.Id.ToString().Contains(filterText) || 
+                book.Title.ToLower().Contains(filterText) ||
+                book.Isbn.Code.ToLower().Contains(filterText) ||
+                book.Author.FullName.ToLower().Contains(filterText) ||
+                book.Publisher.Name.ToLower().Contains(filterText) ||
+                book.Category.Name.ToLower().Contains(filterText)
+            ).ToList();
+
+            dataGridViewBooks.Rows.Clear();
+
+            foreach (var book in filteredBooks)
+            {
+                dataGridViewBooks.Rows.Add(
+                    book.Id,
+                    book.Title,
+                    book.Isbn.Code,
+                    book.Author.FullName,
+                    book.Publisher.Name,
+                    book.Category.Name
+                );
+
+
             foreach (DataGridViewRow row in dataGridViewBooks.Rows)
             {
                 if (row.IsNewRow) continue; 
@@ -107,10 +132,12 @@ namespace BookApp1
                     }
                 }
                 row.Visible = visible;
+
             }
         }
     }
 }
+
 
 
 
