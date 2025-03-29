@@ -1,20 +1,9 @@
-﻿namespace BookApp1
-{
-    partial class MainForm
-    {
-        /// <summary>
-        ///  Required designer variable.
-        /// </summary>
+﻿namespace BookApp1 {
+    partial class MainForm {
         private System.ComponentModel.IContainer components = null;
 
-        /// <summary>
-        ///  Clean up any resources being used.
-        /// </summary>
-        /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
-        protected override void Dispose(bool disposing)
-        {
-            if (disposing && (components != null))
-            {
+        protected override void Dispose(bool disposing) {
+            if (disposing && (components != null)) {
                 components.Dispose();
             }
             base.Dispose(disposing);
@@ -22,18 +11,15 @@
 
         #region Windows Form Designer generated code
 
-        /// <summary>
-        ///  Required method for Designer support - do not modify
-        ///  the contents of this method with the code editor.
-        /// </summary>
-        private void InitializeComponent()
-        {
+        private void InitializeComponent() {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
             dataGridViewBooks = new DataGridView();
             btnNewForm = new Button();
             btnOpenEditForm = new Button();
             btnBookDelete = new Button();
             textBoxFilter = new TextBox();
+            btnManageAuthors = new Button();
+            btnManagePublishers = new Button();
             ((System.ComponentModel.ISupportInitialize)dataGridViewBooks).BeginInit();
             SuspendLayout();
             // 
@@ -41,9 +27,9 @@
             // 
             dataGridViewBooks.BorderStyle = BorderStyle.Fixed3D;
             dataGridViewBooks.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dataGridViewBooks.Location = new Point(34, 33);
+            dataGridViewBooks.Location = new Point(34, 53);
             dataGridViewBooks.Name = "dataGridViewBooks";
-            dataGridViewBooks.Size = new Size(643, 338);
+            dataGridViewBooks.Size = new Size(643, 318);
             dataGridViewBooks.TabIndex = 0;
             // 
             // btnNewForm
@@ -77,22 +63,46 @@
             btnBookDelete.TabIndex = 3;
             btnBookDelete.Text = "Delete";
             btnBookDelete.UseVisualStyleBackColor = true;
-            btnBookDelete.Click += btnBookDelete_Click;
+            btnBookDelete.Click += btnBookDelete_Click; // Kept as is, assuming it exists
             // 
             // textBoxFilter
             // 
             textBoxFilter.BorderStyle = BorderStyle.FixedSingle;
-            textBoxFilter.Location = new Point(34, 397);
+            textBoxFilter.Location = new Point(34, 12);
             textBoxFilter.Name = "textBoxFilter";
             textBoxFilter.Size = new Size(194, 23);
             textBoxFilter.TabIndex = 4;
             textBoxFilter.TextChanged += textBoxFilter_TextChanged;
+            // 
+            // btnManageAuthors
+            // 
+            btnManageAuthors.FlatStyle = FlatStyle.Popup;
+            btnManageAuthors.Location = new Point(286, 397);
+            btnManageAuthors.Name = "btnManageAuthors";
+            btnManageAuthors.Size = new Size(107, 23);
+            btnManageAuthors.TabIndex = 5;
+            btnManageAuthors.Text = "Manage Authors";
+            btnManageAuthors.UseVisualStyleBackColor = true;
+            btnManageAuthors.Click += btnManageAuthors_Click;
+            // 
+            // btnManagePublishers
+            // 
+            btnManagePublishers.FlatStyle = FlatStyle.Popup;
+            btnManagePublishers.Location = new Point(148, 397);
+            btnManagePublishers.Name = "btnManagePublishers";
+            btnManagePublishers.Size = new Size(132, 23);
+            btnManagePublishers.TabIndex = 6;
+            btnManagePublishers.Text = "Manage Publishers";
+            btnManagePublishers.UseVisualStyleBackColor = true;
+            btnManagePublishers.Click += btnManagePublishers_Click;
             // 
             // MainForm
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(716, 450);
+            Controls.Add(btnManagePublishers);
+            Controls.Add(btnManageAuthors);
             Controls.Add(textBoxFilter);
             Controls.Add(btnBookDelete);
             Controls.Add(btnOpenEditForm);
@@ -114,5 +124,7 @@
         private Button btnOpenEditForm;
         private Button btnBookDelete;
         private TextBox textBoxFilter;
+        private Button btnManageAuthors;
+        private Button btnManagePublishers;
     }
 }
