@@ -1,35 +1,36 @@
-﻿using BookApp1.Classes;
-namespace BookApp1
-{
-    public partial class MainForm : Form
-    {
+﻿using System;
+using System.Windows.Forms;
+using BookApp1.Classes;
 
-
+namespace BookApp1 {
+    public partial class MainForm : Form {
         private string userRole;
+        private readonly IBookRepository bookRepository;
+        private readonly IAuthorRepository authorRepository;
+        private readonly IPublisherRepository publisherRepository;
 
-        public MainForm(string role)
-        {
-            InitializeComponent(); 
+        public MainForm(string role) {
+            InitializeComponent();
             userRole = role;
+            bookRepository = new BookRepository();
+            authorRepository = new AuthorRepository();
+            publisherRepository = new PublisherRepository();
             SetPermissions();
-            FillGridView(); 
+            FillGridView();
         }
 
-        private void SetPermissions()
-        {
-            if (userRole == "user")
-            {
+        private void SetPermissions() {
+            if (userRole == "user") {
                 btnOpenEditForm.Enabled = false;
                 btnBookDelete.Enabled = false;
                 btnNewForm.Enabled = false;
+                btnManagePublishers.Enabled = false;
+                btnManageAuthors.Enabled = false;
             }
         }
 
-        void FillGridView()
-        {
-           
-            if (dataGridViewBooks.Columns.Count == 0)
-            {
+        void FillGridView() {
+            if (dataGridViewBooks.Columns.Count == 0) {
                 dataGridViewBooks.Columns.Add("Id", "ID");
                 dataGridViewBooks.Columns.Add("Title", "Назва");
                 dataGridViewBooks.Columns.Add("Isbn", "ISBN");
@@ -39,18 +40,15 @@ namespace BookApp1
             }
 
             dataGridViewBooks.Rows.Clear();
+            List<Book> bookList = bookRepository.GetBooks();
 
-            List<Book> bookList = new Book().GetBooks();
-
-            foreach (var book in bookList)
-            {
-                if (book != null) 
-                {
+            foreach (var book in bookList) {
+                if (book != null) {
                     dataGridViewBooks.Rows.Add(
                         book.Id,
                         book.Title,
                         book.Isbn?.Code,
-                        book.Author?.FullName,
+                        book.Author?.Name,
                         book.Publisher?.Name,
                         book.Category?.Name
                     );
@@ -58,59 +56,68 @@ namespace BookApp1
             }
         }
 
-        private void btnNewForm_Click(object sender, EventArgs e)
-        {
-            NewBookForm formNewBook = new NewBookForm();
+        private void btnNewForm_Click(object sender, EventArgs e) {
+            NewBookForm formNewBook = new NewBookForm(bookRepository, authorRepository, publisherRepository);
             formNewBook.ShowDialog();
             FillGridView();
         }
 
-        private void btnOpenEditForm_Click(object sender, EventArgs e)
-        {
+        private void btnOpenEditForm_Click(object sender, EventArgs e) {
             if (dataGridViewBooks.SelectedRows.Count == 0) return;
 
             int bookId = Convert.ToInt32(dataGridViewBooks.SelectedRows[0].Cells[0].Value);
+            Book? selectedBook = bookRepository.GetBookById(bookId);
 
-            Book? selectedBook = Book.GetBookData(bookId);
-            if (selectedBook != null)
-            {
-                EditBookForm editForm = new EditBookForm(selectedBook);
+            if (selectedBook != null) {
+                EditBookForm editForm = new EditBookForm(selectedBook, bookRepository, authorRepository, publisherRepository);
                 editForm.ShowDialog();
                 FillGridView();
             }
         }
 
-        private void btnBookDelete_Click(object sender, EventArgs e)
-        {
-            if (dataGridViewBooks.SelectedRows.Count == 0) return;
-            int bookId = Convert.ToInt32(dataGridViewBooks.SelectedRows[0].Cells[0].Value);
-            Book book = new Book();
-            book.DeleteBook(bookId);
+        private void textBoxFilter_TextChanged(object sender, EventArgs e) {
+            string filterText = textBoxFilter.Text.Trim().ToLower();
+            List<Book> books = bookRepository.GetBooks();
+
+            var filteredBooks = books.Where(book =>
+                book.Id.ToString().Contains(filterText) ||
+                book.Title.ToLower().Contains(filterText) ||
+                book.Isbn.Code.ToLower().Contains(filterText) ||
+                (book.Author?.Name.ToLower().Contains(filterText) ?? false) ||
+                (book.Publisher?.Name.ToLower().Contains(filterText) ?? false) || 
+                book.Category.Name.ToLower().Contains(filterText)
+            ).ToList();
+
+            dataGridViewBooks.Rows.Clear();
+
+            foreach (var book in filteredBooks) {
+                dataGridViewBooks.Rows.Add(
+                    book.Id,
+                    book.Title,
+                    book.Isbn.Code,
+                    book.Author?.Name,
+                    book.Publisher?.Name,
+                    book.Category.Name
+                );
+            }
+        }
+
+        private void btnManageAuthors_Click(object sender, EventArgs e) {
+            var authorForm = new AuthorManagementForm(authorRepository);
+            authorForm.ShowDialog();
             FillGridView();
         }
 
-        private void textBoxFilter_TextChanged(object sender, EventArgs e)
-        {
-            string filterText = textBoxFilter.Text.Trim().ToLower();
-
-            foreach (DataGridViewRow row in dataGridViewBooks.Rows)
-            {
-                if (row.IsNewRow) continue; 
-
-                bool visible = false;
-                for (int i = 0; i < row.Cells.Count; i++)
-                {
-                    if (row.Cells[i].Value != null && row.Cells[i].Value.ToString().ToLower().Contains(filterText))
-                    {
-                        visible = true;
-                        break;
-                    }
-                }
-                row.Visible = visible;
-            }
+        private void btnManagePublishers_Click(object sender, EventArgs e) {
+            var publisherForm = new PublisherManagementForm(publisherRepository);
+            publisherForm.ShowDialog();
+            FillGridView();
+        }
+        private void btnBookDelete_Click(object sender, EventArgs e) {
+            if (dataGridViewBooks.SelectedRows.Count == 0) return;
+            int bookId = Convert.ToInt32(dataGridViewBooks.SelectedRows[0].Cells[0].Value);
+            bookRepository.DeleteBook(bookId);
+            FillGridView();
         }
     }
 }
-
-
-

@@ -1,74 +1,72 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Net;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using BookApp1.Classes;
 
-namespace BookApp1
-{
-    public partial class EditBookForm : Form
-    {
-        int selectedBookId;
-
+namespace BookApp1 {
+    public partial class EditBookForm : Form {
+        private readonly IBookRepository bookRepository;
+        private readonly IAuthorRepository authorRepository;
+        private readonly IPublisherRepository publisherRepository;
         private Book currentBook;
 
-        public EditBookForm(Book book) 
-        {
+        public EditBookForm(Book book, IBookRepository bookRepo, IAuthorRepository authorRepo, IPublisherRepository publisherRepo) {
             InitializeComponent();
             currentBook = book;
+            bookRepository = bookRepo;
+            authorRepository = authorRepo;
+            publisherRepository = publisherRepo;
+
             txtTitle.Text = book.Title;
             txtIsbn.Text = book.Isbn?.Code;
-            txtPublisher.Text = book.Publisher?.Name;
-            txtAuthor.Text = book.Author?.FullName;
             txtCategory.Text = book.Category?.Name;
+            SetupAuthorComboBox();
+            SetupPublisherComboBox();
         }
 
-        private void btnOk_Click(object sender, EventArgs e)
-        {
+        private void SetupAuthorComboBox() {
+            comboBoxAuthors.DataSource = authorRepository.GetAuthors();
+            comboBoxAuthors.DisplayMember = "Name";
+            comboBoxAuthors.ValueMember = "Id";
+            comboBoxAuthors.SelectedItem = authorRepository.GetAuthorById(currentBook.AuthorId);
+        }
+
+        private void SetupPublisherComboBox() {
+            comboBoxPublishers.DataSource = publisherRepository.GetPublishers();
+            comboBoxPublishers.DisplayMember = "Name";
+            comboBoxPublishers.ValueMember = "Id";
+            comboBoxPublishers.SelectedItem = publisherRepository.GetPublisherById(currentBook.PublisherId);
+        }
+
+        private void btnAddAuthor_Click(object sender, EventArgs e) {
+            var authorForm = new AuthorManagementForm(authorRepository);
+            authorForm.ShowDialog();
+            SetupAuthorComboBox();
+        }
+
+        private void btnAddPublisher_Click(object sender, EventArgs e) {
+            var publisherForm = new PublisherManagementForm(publisherRepository);
+            publisherForm.ShowDialog();
+            SetupPublisherComboBox();
+        }
+
+        private void btnOk_Click(object sender, EventArgs e) {
+            var selectedAuthor = (Author)comboBoxAuthors.SelectedItem;
+            var selectedPublisher = (Publisher)comboBoxPublishers.SelectedItem;
+            if (selectedAuthor == null || selectedPublisher == null) {
+                MessageBox.Show("Please select an author and a publisher.");
+                return;
+            }
+
             currentBook.Title = txtTitle.Text;
             currentBook.Isbn.Code = txtIsbn.Text;
-            currentBook.Publisher.Name = txtPublisher.Text;
-            currentBook.Author.FullName = txtAuthor.Text;
+            currentBook.Publisher = selectedPublisher;
+            currentBook.PublisherId = selectedPublisher.Id;
+            currentBook.Author = selectedAuthor;
+            currentBook.AuthorId = selectedAuthor.Id;
             currentBook.Category.Name = txtCategory.Text;
 
-            currentBook.EditBook(currentBook); 
-
+            bookRepository.EditBook(currentBook);
             this.Close();
-        }
-
-        void GetBookData()
-        {
-            Book? book = Book.GetBookData(selectedBookId); 
-            if (book != null)
-            {
-                txtTitle.Text = book.Title;
-                txtIsbn.Text = book.Isbn?.Code;
-                txtPublisher.Text = book.Publisher?.Name;
-                txtAuthor.Text = book.Author?.FullName;
-                txtCategory.Text = book.Category?.Name;
-            }
-        }
-
-        void EditBookData()
-        {
-            Book book = new Book
-            {
-                Id = selectedBookId,
-                Title = txtTitle.Text,
-                Isbn = new Isbn { Code = txtIsbn.Text },
-                Publisher = new Publisher { Name = txtPublisher.Text },
-                Author = new Author { FullName = txtAuthor.Text },
-                Category = new Category { Name = txtCategory.Text }
-            };
-
-            book.EditBook(book);
         }
     }
 }
-

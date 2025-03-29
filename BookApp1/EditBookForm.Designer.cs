@@ -1,20 +1,9 @@
-﻿namespace BookApp1
-{
-    partial class EditBookForm
-    {
-        /// <summary>
-        /// Required designer variable.
-        /// </summary>
+﻿namespace BookApp1 {
+    partial class EditBookForm {
         private System.ComponentModel.IContainer components = null;
 
-        /// <summary>
-        /// Clean up any resources being used.
-        /// </summary>
-        /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
-        protected override void Dispose(bool disposing)
-        {
-            if (disposing && (components != null))
-            {
+        protected override void Dispose(bool disposing) {
+            if (disposing && (components != null)) {
                 components.Dispose();
             }
             base.Dispose(disposing);
@@ -22,12 +11,7 @@
 
         #region Windows Form Designer generated code
 
-        /// <summary>
-        /// Required method for Designer support - do not modify
-        /// the contents of this method with the code editor.
-        /// </summary>
-        private void InitializeComponent()
-        {
+        private void InitializeComponent() {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(EditBookForm));
             btnOk = new Button();
             btnCancel = new Button();
@@ -37,16 +21,18 @@
             label2 = new Label();
             label1 = new Label();
             txtCategory = new TextBox();
-            txtAuthor = new TextBox();
-            txtPublisher = new TextBox();
             txtIsbn = new TextBox();
             txtTitle = new TextBox();
+            comboBoxAuthors = new ComboBox();
+            btnAddAuthor = new Button();
+            comboBoxPublishers = new ComboBox();
+            btnAddPublisher = new Button();
             SuspendLayout();
             // 
             // btnOk
             // 
             btnOk.FlatStyle = FlatStyle.Popup;
-            btnOk.Location = new Point(185, 309);
+            btnOk.Location = new Point(197, 296);
             btnOk.Name = "btnOk";
             btnOk.Size = new Size(75, 23);
             btnOk.TabIndex = 6;
@@ -57,7 +43,7 @@
             // btnCancel
             // 
             btnCancel.FlatStyle = FlatStyle.Popup;
-            btnCancel.Location = new Point(294, 309);
+            btnCancel.Location = new Point(294, 296);
             btnCancel.Name = "btnCancel";
             btnCancel.Size = new Size(75, 23);
             btnCancel.TabIndex = 7;
@@ -67,7 +53,7 @@
             // label5
             // 
             label5.AutoSize = true;
-            label5.Location = new Point(12, 225);
+            label5.Location = new Point(12, 232);
             label5.Name = "label5";
             label5.Size = new Size(58, 15);
             label5.TabIndex = 21;
@@ -105,33 +91,17 @@
             label1.AutoSize = true;
             label1.Location = new Point(12, 12);
             label1.Name = "label1";
-            label1.Size = new Size(33, 15);
+            label1.Size = new Size(32, 15);
             label1.TabIndex = 17;
             label1.Text = "Title:";
             // 
             // txtCategory
             // 
             txtCategory.BorderStyle = BorderStyle.FixedSingle;
-            txtCategory.Location = new Point(12, 243);
+            txtCategory.Location = new Point(12, 250);
             txtCategory.Name = "txtCategory";
             txtCategory.Size = new Size(357, 23);
             txtCategory.TabIndex = 5;
-            // 
-            // txtAuthor
-            // 
-            txtAuthor.BorderStyle = BorderStyle.FixedSingle;
-            txtAuthor.Location = new Point(12, 192);
-            txtAuthor.Name = "txtAuthor";
-            txtAuthor.Size = new Size(357, 23);
-            txtAuthor.TabIndex = 4;
-            // 
-            // txtPublisher
-            // 
-            txtPublisher.BorderStyle = BorderStyle.FixedSingle;
-            txtPublisher.Location = new Point(12, 138);
-            txtPublisher.Name = "txtPublisher";
-            txtPublisher.Size = new Size(357, 23);
-            txtPublisher.TabIndex = 3;
             // 
             // txtIsbn
             // 
@@ -149,12 +119,54 @@
             txtTitle.Size = new Size(357, 23);
             txtTitle.TabIndex = 1;
             // 
+            // comboBoxAuthors
+            // 
+            comboBoxAuthors.FormattingEnabled = true;
+            comboBoxAuthors.Location = new Point(12, 192);
+            comboBoxAuthors.Name = "comboBoxAuthors";
+            comboBoxAuthors.Size = new Size(260, 23);
+            comboBoxAuthors.TabIndex = 22;
+            // 
+            // btnAddAuthor
+            // 
+            btnAddAuthor.FlatStyle = FlatStyle.Popup;
+            btnAddAuthor.Location = new Point(278, 192);
+            btnAddAuthor.Name = "btnAddAuthor";
+            btnAddAuthor.Size = new Size(91, 23);
+            btnAddAuthor.TabIndex = 23;
+            btnAddAuthor.Text = "Add Author";
+            btnAddAuthor.UseVisualStyleBackColor = true;
+            btnAddAuthor.Click += btnAddAuthor_Click;
+            // 
+            // comboBoxPublishers
+            // 
+            comboBoxPublishers.FormattingEnabled = true;
+            comboBoxPublishers.Location = new Point(12, 138);
+            comboBoxPublishers.Name = "comboBoxPublishers";
+            comboBoxPublishers.Size = new Size(260, 23);
+            comboBoxPublishers.TabIndex = 24;
+            // 
+            // btnAddPublisher
+            // 
+            btnAddPublisher.FlatStyle = FlatStyle.Popup;
+            btnAddPublisher.Location = new Point(278, 138);
+            btnAddPublisher.Name = "btnAddPublisher";
+            btnAddPublisher.Size = new Size(91, 23);
+            btnAddPublisher.TabIndex = 25;
+            btnAddPublisher.Text = "Add Publisher";
+            btnAddPublisher.UseVisualStyleBackColor = true;
+            btnAddPublisher.Click += btnAddPublisher_Click;
+            // 
             // EditBookForm
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             CancelButton = btnCancel;
-            ClientSize = new Size(385, 348);
+            ClientSize = new Size(385, 331);
+            Controls.Add(btnAddPublisher);
+            Controls.Add(comboBoxPublishers);
+            Controls.Add(btnAddAuthor);
+            Controls.Add(comboBoxAuthors);
             Controls.Add(btnOk);
             Controls.Add(btnCancel);
             Controls.Add(label5);
@@ -163,8 +175,6 @@
             Controls.Add(label2);
             Controls.Add(label1);
             Controls.Add(txtCategory);
-            Controls.Add(txtAuthor);
-            Controls.Add(txtPublisher);
             Controls.Add(txtIsbn);
             Controls.Add(txtTitle);
             Icon = (Icon)resources.GetObject("$this.Icon");
@@ -185,9 +195,11 @@
         private Label label2;
         private Label label1;
         private TextBox txtCategory;
-        private TextBox txtAuthor;
-        private TextBox txtPublisher;
         private TextBox txtIsbn;
         private TextBox txtTitle;
+        private ComboBox comboBoxAuthors;
+        private Button btnAddAuthor;
+        private ComboBox comboBoxPublishers;
+        private Button btnAddPublisher;
     }
 }

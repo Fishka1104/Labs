@@ -9,6 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using BookApp1;
+using BookApp1.Classes;
 using Microsoft.VisualBasic.ApplicationServices;
 
 namespace BookApp1
@@ -34,39 +35,36 @@ namespace BookApp1
             textBoxPassword.Clear();
         }
 
-      
-               
-            private void btnLogin_Click(object sender, EventArgs e)
+
+
+        private void btnLogin_Click(object sender, EventArgs e)
+        {
+            string username = textBoxName.Text;
+            string password = textBoxPassword.Text;
+
+            // Перевірка користувача в репозиторії
+            var user = UserRepository.GetUser(username);
+            if (user != null && BCrypt.Net.BCrypt.Verify(password, user.HashedPassword))
             {
-                string username = textBoxName.Text;
-                string password = textBoxPassword.Text;
-
-                if (username == "admin" && password == "admin")
-                {
-                    UserRole = "admin";
-                }
-                else if (username == "user" && password == "user")
-                {
-                    UserRole = "user";
-                }
-                else
-                {
-                    MessageBox.Show("Неправильне ім'я користувача або пароль", "Помилка", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    return;
-                }
-            //Якщо логін і пароль admin то UserRole = admin акщо логін і пароль user то UserRole = user інакше показує повідомлення про помилку не відкриваючи MainForm.
-
-                MainForm mainForm = new MainForm(UserRole);
-                this.Hide();
-                mainForm.ShowDialog();
-                this.Close();
+                UserRole = user.Role;
             }
+            else
+            {
+                MessageBox.Show("Неправильне ім'я користувача або пароль", "Помилка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
+            MainForm mainForm = new MainForm(UserRole);
+            this.Hide();
+            mainForm.ShowDialog();
+            this.Close();
+        }
+
+        private void btnGoToRegister_Click(object sender, EventArgs e)
+        {
+            RegisterForm registerForm = new RegisterForm();
+            registerForm.ShowDialog();
+        }
     }
 
-
-
 }
-
-
-
-
