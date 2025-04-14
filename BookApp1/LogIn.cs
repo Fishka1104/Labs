@@ -9,18 +9,28 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using BookApp1;
-using Microsoft.VisualBasic.ApplicationServices;
+using BookApp1.Classes;
+
 
 namespace BookApp1
 {
     public partial class LogIn : Form
     {
 
+
         public string UserRole { get; private set; }
 
         public LogIn()
         {
             InitializeComponent();
+            LoadUsers();
+        }
+
+        private void LoadUsers()
+        {
+            listBoxUsers.DataSource = null; 
+            listBoxUsers.DataSource = UserRepository.GetUsers();
+            listBoxUsers.DisplayMember = "Username";
         }
 
         private void btnExit_Click(object sender, EventArgs e)
@@ -34,39 +44,53 @@ namespace BookApp1
             textBoxPassword.Clear();
         }
 
-      
-               
-            private void btnLogin_Click(object sender, EventArgs e)
+        private void btnDeleteUser_Click(object sender, EventArgs e)
+        {
+            if (listBoxUsers.SelectedItem is User selectedUser)
             {
-                string username = textBoxName.Text;
-                string password = textBoxPassword.Text;
-
-                if (username == "admin" && password == "admin")
+                var result = MessageBox.Show($"Ви впевнені, що бажаєте видалити користувача {selectedUser.Username}?", "Підтвердження видалення", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+                if (result == DialogResult.Yes)
                 {
-                    UserRole = "admin";
+                    UserRepository.DeleteUser(selectedUser.Username);
+                    LoadUsers();
                 }
-                else if (username == "user" && password == "user")
-                {
-                    UserRole = "user";
-                }
-                else
-                {
-                    MessageBox.Show("Неправильне ім'я користувача або пароль", "Помилка", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    return;
-                }
-            //Якщо логін і пароль admin то UserRole = admin акщо логін і пароль user то UserRole = user інакше показує повідомлення про помилку не відкриваючи MainForm.
-
-                MainForm mainForm = new MainForm(UserRole);
-                this.Hide();
-                mainForm.ShowDialog();
-                this.Close();
             }
+            else
+            {
+                MessageBox.Show("Будь ласка, виберіть користувача для видалення.", "Помилка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void btnLogin_Click(object sender, EventArgs e)
+        {
+            string username = textBoxName.Text;
+            string password = textBoxPassword.Text;
+
+            // Перевірка користувача в репозиторії
+            var user = UserRepository.GetUser(username);
+            if (user != null && BCrypt.Net.BCrypt.Verify(password, user.HashedPassword))
+            {
+                UserRole = user.Role;
+            }
+            else
+            {
+                MessageBox.Show("Неправильне ім'я користувача або пароль", "Помилка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
+            MainForm mainForm = new MainForm(UserRole);
+            this.Hide();
+            mainForm.ShowDialog();
+            this.Close();
+        }
+
+        private void btnGoToRegister_Click(object sender, EventArgs e)
+        {
+            RegisterForm registerForm = new RegisterForm();
+            registerForm.ShowDialog();
+        }
+
+        
     }
 
-
-
 }
-
-
-
-

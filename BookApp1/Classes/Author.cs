@@ -1,19 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace BookApp1.Classes
-{
-    public class Author : BaseEntity
-    {
-        public string FullName { get; set; }
+namespace BookApp1.Classes {
+    public class Author : BaseEntity {
+        public string Name { get; set; } 
+        public DateTime? BirthDate { get; set; }
+        public DateTime? DeathDate { get; set; }
+        public string Nationality { get; set; }
+        public List<string> Genres { get; set; } = new List<string>();
 
-        public override void DisplayInfo()
-        {
-            Console.WriteLine($"Author: {FullName}");
+        public override void DisplayInfo() {
+            string lifeSpan = (BirthDate.HasValue ? BirthDate.Value.ToShortDateString() : "Unknown") +
+                             " - " +
+                             (DeathDate.HasValue ? DeathDate.Value.ToShortDateString() : "Present");
+            Console.WriteLine($"Author: {Name}, Life: {lifeSpan}, Nationality: {Nationality}, Genres: {string.Join(", ", Genres)}");
         }
     }
 }
-
