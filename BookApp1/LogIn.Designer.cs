@@ -1,4 +1,4 @@
-﻿namespace BookApp1
+namespace BookApp1
 {
     partial class LogIn
     {
