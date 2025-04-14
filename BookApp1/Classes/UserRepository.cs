@@ -1,39 +1,42 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.IO;
-using Newtonsoft.Json;
+using System.Text.Json;
 
 namespace BookApp1.Classes
 {
-    public static class UserRepository
+    public static class UserRepository 
     {
-        private static readonly string filePath = "users.json";
+        private static readonly JsonStorage<User> _storage = new JsonStorage<User>("users.json");
 
         public static List<User> GetUsers()
         {
-            string json = File.ReadAllText(filePath);
-            return JsonConvert.DeserializeObject<List<User>>(json);
+            return _storage.GetAll();
         }
 
         public static void AddUser(string username, string hashedPassword, string role)
         {
-            var users = GetUsers();
-            users.Add(new User { Username = username, HashedPassword = hashedPassword, Role = role });
-            SaveUsers(users);
+            var user = new User { Username = username, HashedPassword = hashedPassword, Role = role };
+            _storage.Add(user);
+            _storage.Save();
         }
 
         public static User GetUser(string username)
         {
-            return GetUsers().FirstOrDefault(u => u.Username == username);
+            return _storage.GetAll().FirstOrDefault(u => u.Username == username);
         }
 
-        private static void SaveUsers(List<User> users)
+        public static void DeleteUser(string username)
         {
-            string json = JsonConvert.SerializeObject(users, Formatting.Indented);
-            File.WriteAllText(filePath, json);
+            var user = GetUser(username);
+            if (user != null)
+            {
+                _storage.Delete(user.Id);
+                _storage.Save();
+            }
         }
     }
 

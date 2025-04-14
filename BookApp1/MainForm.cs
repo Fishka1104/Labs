@@ -12,9 +12,18 @@ namespace BookApp1 {
         public MainForm(string role) {
             InitializeComponent();
             userRole = role;
-            bookRepository = new BookRepository();
-            authorRepository = new AuthorRepository();
-            publisherRepository = new PublisherRepository();
+
+            // Створення зберігання для кожного типу даних
+            var bookStorage = new JsonStorage<Book>("books.json");
+            var authorStorage = new JsonStorage<Author>("authors.json");
+            var publisherStorage = new JsonStorage<Publisher>("publishers.json");
+
+            // Передача зберігання в репозиторії
+            bookRepository = new BookRepository(bookStorage);
+            authorRepository = new AuthorRepository(authorStorage);
+            publisherRepository = new PublisherRepository(publisherStorage);
+
+
             SetPermissions();
             FillGridView();
         }

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -10,18 +10,27 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using BookApp1;
 using BookApp1.Classes;
-using Microsoft.VisualBasic.ApplicationServices;
+
 
 namespace BookApp1
 {
     public partial class LogIn : Form
     {
 
+
         public string UserRole { get; private set; }
 
         public LogIn()
         {
             InitializeComponent();
+            LoadUsers();
+        }
+
+        private void LoadUsers()
+        {
+            listBoxUsers.DataSource = null; 
+            listBoxUsers.DataSource = UserRepository.GetUsers();
+            listBoxUsers.DisplayMember = "Username";
         }
 
         private void btnExit_Click(object sender, EventArgs e)
@@ -35,7 +44,22 @@ namespace BookApp1
             textBoxPassword.Clear();
         }
 
-
+        private void btnDeleteUser_Click(object sender, EventArgs e)
+        {
+            if (listBoxUsers.SelectedItem is User selectedUser)
+            {
+                var result = MessageBox.Show($"Ви впевнені, що бажаєте видалити користувача {selectedUser.Username}?", "Підтвердження видалення", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+                if (result == DialogResult.Yes)
+                {
+                    UserRepository.DeleteUser(selectedUser.Username);
+                    LoadUsers();
+                }
+            }
+            else
+            {
+                MessageBox.Show("Будь ласка, виберіть користувача для видалення.", "Помилка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
 
         private void btnLogin_Click(object sender, EventArgs e)
         {
@@ -65,6 +89,8 @@ namespace BookApp1
             RegisterForm registerForm = new RegisterForm();
             registerForm.ShowDialog();
         }
+
+        
     }
 
 }
