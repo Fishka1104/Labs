@@ -6,23 +6,21 @@ using System.Text.Json;
 
 namespace BookApp1.Classes {
 
-    public class BookRepository : IBookRepository
+    public class BookRepository : GenericRepository<Book>, IBookRepository
     {
-        private readonly IDataStorage<Book> _storage;
         private readonly IAuthorRepository _authorRepository;
         private readonly IPublisherRepository _publisherRepository;
 
-        
-        public BookRepository(IDataStorage<Book> storage)
+        public BookRepository(IDataStorage<Book> storage, IAuthorRepository authorRepository, IPublisherRepository publisherRepository)
+            : base(storage)
         {
-            _storage = storage;
-            _authorRepository = new AuthorRepository(new JsonStorage<Author>("authors.json"));
-            _publisherRepository = new PublisherRepository(new JsonStorage<Publisher>("publishers.json"));
+            _authorRepository = authorRepository;
+            _publisherRepository = publisherRepository;
         }
 
         public List<Book> GetBooks()
         {
-            var books = _storage.GetAll();
+            var books = base.GetAll();
             foreach (var book in books)
             {
                 book.Author = _authorRepository.GetAuthorById(book.AuthorId);
@@ -33,25 +31,28 @@ namespace BookApp1.Classes {
 
         public void CreateBook(Book book)
         {
-            _storage.Add(book);
-            _storage.Save();
+            base.Add(book);
         }
 
         public void EditBook(Book book)
         {
-            _storage.Update(book);
-            _storage.Save();
+            base.Update(book);
         }
 
         public void DeleteBook(int bookId)
         {
-            _storage.Delete(bookId);
-            _storage.Save();
+            base.Delete(bookId);
         }
 
         public Book? GetBookById(int bookId)
         {
-            return _storage.GetById(bookId);
+            var book = base.GetById(bookId);
+            if (book != null)
+            {
+                book.Author = _authorRepository.GetAuthorById(book.AuthorId);
+                book.Publisher = _publisherRepository.GetPublisherById(book.PublisherId);
+            }
+            return book;
         }
     }
 }

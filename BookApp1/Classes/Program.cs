@@ -1,3 +1,5 @@
+﻿using BookApp1.Classes.BookApp1.Classes;
+
 namespace BookApp1.Classes
 {
     internal static class Program
@@ -8,10 +10,15 @@ namespace BookApp1.Classes
         [STAThread]
         static void Main()
         {
-            // To customize application configuration such as set high DPI settings or default font,
-            // see https://aka.ms/applicationconfiguration.
-            ApplicationConfiguration.Initialize();
-            Application.Run(new LogIn());
+            Application.EnableVisualStyles();
+            Application.SetCompatibleTextRenderingDefault(false);
+
+            // Створення зберігання для користувачів
+            var userStorage = new JsonStorage<User>("users.json");
+            var userRepository = new UserRepository(userStorage);
+
+            // Створення та показ форми входу
+            Application.Run(new LogIn(userRepository));
         }
     }
 }

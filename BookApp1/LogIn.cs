@@ -10,26 +10,27 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using BookApp1;
 using BookApp1.Classes;
+using BookApp1.Classes.BookApp1.Classes;
 
 
 namespace BookApp1
 {
     public partial class LogIn : Form
     {
-
-
+        private readonly UserRepository _userRepository;
         public string UserRole { get; private set; }
 
-        public LogIn()
+        public LogIn(UserRepository userRepository)
         {
             InitializeComponent();
+            _userRepository = userRepository;
             LoadUsers();
         }
 
         private void LoadUsers()
         {
-            listBoxUsers.DataSource = null; 
-            listBoxUsers.DataSource = UserRepository.GetUsers();
+            listBoxUsers.DataSource = null;
+            listBoxUsers.DataSource = _userRepository.GetUsers();
             listBoxUsers.DisplayMember = "Username";
         }
 
@@ -51,7 +52,7 @@ namespace BookApp1
                 var result = MessageBox.Show($"Ви впевнені, що бажаєте видалити користувача {selectedUser.Username}?", "Підтвердження видалення", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
                 if (result == DialogResult.Yes)
                 {
-                    UserRepository.DeleteUser(selectedUser.Username);
+                    _userRepository.DeleteUser(selectedUser.Username);
                     LoadUsers();
                 }
             }
@@ -67,7 +68,7 @@ namespace BookApp1
             string password = textBoxPassword.Text;
 
             // Перевірка користувача в репозиторії
-            var user = UserRepository.GetUser(username);
+            var user = _userRepository.GetUser(username);
             if (user != null && BCrypt.Net.BCrypt.Verify(password, user.HashedPassword))
             {
                 UserRole = user.Role;
@@ -86,11 +87,9 @@ namespace BookApp1
 
         private void btnGoToRegister_Click(object sender, EventArgs e)
         {
-            RegisterForm registerForm = new RegisterForm();
+            RegisterForm registerForm = new RegisterForm(_userRepository);
             registerForm.ShowDialog();
         }
-
-        
     }
 
 }

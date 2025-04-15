@@ -6,41 +6,35 @@ using System.Text.Json;
 
 namespace BookApp1.Classes {
 
-    public class PublisherRepository : IPublisherRepository
+    public class PublisherRepository : GenericRepository<Publisher>, IPublisherRepository
     {
-        private readonly IDataStorage<Publisher> _storage;
-
-        public PublisherRepository(IDataStorage<Publisher> storage)
+        public PublisherRepository(IDataStorage<Publisher> storage) : base(storage)
         {
-            _storage = storage;
         }
 
         public List<Publisher> GetPublishers()
         {
-            return _storage.GetAll();
+            return base.GetAll();
         }
 
         public void CreatePublisher(Publisher publisher)
         {
-            _storage.Add(publisher);
-            _storage.Save();
+            base.Add(publisher);
         }
 
         public void UpdatePublisher(Publisher publisher)
         {
-            _storage.Update(publisher);
-            _storage.Save();
+            base.Update(publisher);
         }
 
         public void DeletePublisher(int publisherId)
         {
-            _storage.Delete(publisherId);
-            _storage.Save();
+            base.Delete(publisherId);
         }
 
         public Publisher? GetPublisherById(int publisherId)
         {
-            return _storage.GetById(publisherId);
+            return base.GetById(publisherId);
         }
     }
 }
