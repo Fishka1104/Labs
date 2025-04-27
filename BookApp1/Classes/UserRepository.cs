@@ -8,36 +8,44 @@ using System.Text.Json;
 
 namespace BookApp1.Classes
 {
-    public static class UserRepository 
+    using System.Collections.Generic;
+    using System.Linq;
+
+    namespace BookApp1.Classes
     {
-        private static readonly JsonStorage<User> _storage = new JsonStorage<User>("users.json");
-
-        public static List<User> GetUsers()
+        public class UserRepository : GenericRepository<User>, IUserRepository
         {
-            return _storage.GetAll();
-        }
-
-        public static void AddUser(string username, string hashedPassword, string role)
-        {
-            var user = new User { Username = username, HashedPassword = hashedPassword, Role = role };
-            _storage.Add(user);
-            _storage.Save();
-        }
-
-        public static User GetUser(string username)
-        {
-            return _storage.GetAll().FirstOrDefault(u => u.Username == username);
-        }
-
-        public static void DeleteUser(string username)
-        {
-            var user = GetUser(username);
-            if (user != null)
+            public UserRepository(IDataStorage<User> storage) : base(storage)
             {
-                _storage.Delete(user.Id);
-                _storage.Save();
+            }
+
+            public List<User> GetUsers()
+            {
+                return base.GetAll();
+            }
+
+            public void AddUser(string username, string hashedPassword, string role)
+            {
+                var user = new User { Username = username, HashedPassword = hashedPassword, Role = role };
+                base.Add(user);
+            }
+
+            public User? GetUser(string username)
+            {
+                return base.GetAll().FirstOrDefault(u => u.Username == username);
+            }
+
+            public void DeleteUser(string username)
+            {
+                var user = GetUser(username);
+                if (user != null)
+                {
+                    base.Delete(user.Id);
+                }
             }
         }
     }
 
+
 }
+

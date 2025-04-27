@@ -20,6 +20,8 @@ namespace BookApp1.Classes {
 
         public Category Category { get; set; }
 
+        public int CategoryId { get; set; }
+
         public override void DisplayInfo() {
             Console.WriteLine($"Book: {Title}, ISBN: {Isbn.Code}, Author: {Author?.Name ?? "Unknown"}, Publisher: {Publisher?.Name ?? "Unknown"}, Category: {Category.Name}");
         }

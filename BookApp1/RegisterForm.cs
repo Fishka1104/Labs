@@ -8,24 +8,26 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using BookApp1.Classes;
+using BookApp1.Classes.BookApp1.Classes;
 
 namespace BookApp1
 {
     public partial class RegisterForm : Form
     {
-        public RegisterForm()
+        private readonly UserRepository _userRepository;
+
+        public RegisterForm(UserRepository userRepository)
         {
             InitializeComponent();
+            _userRepository = userRepository;
             InitializeComboBox();
         }
 
         private void InitializeComboBox()
         {
-           
             comboBoxRole.Items.Add("admin");
             comboBoxRole.Items.Add("user");
-
-            comboBoxRole.SelectedIndex = 1; 
+            comboBoxRole.SelectedIndex = 1;
         }
 
         private void btnRegister_Click(object sender, EventArgs e)
@@ -51,7 +53,7 @@ namespace BookApp1
             string hashedPassword = BCrypt.Net.BCrypt.HashPassword(password);
 
             // Додавання користувача до репозиторію
-            UserRepository.AddUser(username, hashedPassword, role);
+            _userRepository.AddUser(username, hashedPassword, role);
 
             MessageBox.Show("Реєстрація успішна", "Успіх", MessageBoxButtons.OK, MessageBoxIcon.Information);
 
@@ -59,4 +61,5 @@ namespace BookApp1
             this.Close();
         }
     }
+
 }

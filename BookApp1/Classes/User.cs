@@ -11,6 +11,7 @@ namespace BookApp1.Classes
         public string Username { get; set; }
         public string HashedPassword { get; set; }
         public string Role { get; set; }
+        public List<BorrowedBook> BorrowedBooks { get; set; } = new List<BorrowedBook>();
 
         public override void DisplayInfo()
         {
