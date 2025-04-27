@@ -68,21 +68,19 @@ namespace BookApp1
             string password = textBoxPassword.Text;
 
             // Перевірка користувача в репозиторії
-            var user = _userRepository.GetUser(username);
+            var user = _userRepository.GetUser(username); // Використовуйте екземпляр _userRepository
             if (user != null && BCrypt.Net.BCrypt.Verify(password, user.HashedPassword))
             {
                 UserRole = user.Role;
+                MainForm mainForm = new MainForm(UserRole, user);
+                this.Hide();
+                mainForm.ShowDialog();
+                this.Close();
             }
             else
             {
                 MessageBox.Show("Неправильне ім'я користувача або пароль", "Помилка", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                return;
             }
-
-            MainForm mainForm = new MainForm(UserRole);
-            this.Hide();
-            mainForm.ShowDialog();
-            this.Close();
         }
 
         private void btnGoToRegister_Click(object sender, EventArgs e)

@@ -11,7 +11,8 @@
 
         #region Windows Form Designer generated code
 
-        private void InitializeComponent() {
+        private void InitializeComponent()
+        {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
             dataGridViewBooks = new DataGridView();
             btnNewForm = new Button();
@@ -20,6 +21,8 @@
             textBoxFilter = new TextBox();
             btnManageAuthors = new Button();
             btnManagePublishers = new Button();
+            btnBorrowBook = new Button();
+            btnViewBorrowedBooks = new Button();
             ((System.ComponentModel.ISupportInitialize)dataGridViewBooks).BeginInit();
             SuspendLayout();
             // 
@@ -63,23 +66,23 @@
             btnBookDelete.TabIndex = 3;
             btnBookDelete.Text = "Delete";
             btnBookDelete.UseVisualStyleBackColor = true;
-            btnBookDelete.Click += btnBookDelete_Click; // Kept as is, assuming it exists
+            btnBookDelete.Click += btnBookDelete_Click;
             // 
             // textBoxFilter
             // 
             textBoxFilter.BorderStyle = BorderStyle.FixedSingle;
-            textBoxFilter.Location = new Point(34, 12);
+            textBoxFilter.Location = new Point(411, 12);
             textBoxFilter.Name = "textBoxFilter";
-            textBoxFilter.Size = new Size(194, 23);
+            textBoxFilter.Size = new Size(266, 23);
             textBoxFilter.TabIndex = 4;
             textBoxFilter.TextChanged += textBoxFilter_TextChanged;
             // 
             // btnManageAuthors
             // 
             btnManageAuthors.FlatStyle = FlatStyle.Popup;
-            btnManageAuthors.Location = new Point(286, 397);
+            btnManageAuthors.Location = new Point(192, 397);
             btnManageAuthors.Name = "btnManageAuthors";
-            btnManageAuthors.Size = new Size(107, 23);
+            btnManageAuthors.Size = new Size(132, 23);
             btnManageAuthors.TabIndex = 5;
             btnManageAuthors.Text = "Manage Authors";
             btnManageAuthors.UseVisualStyleBackColor = true;
@@ -88,7 +91,7 @@
             // btnManagePublishers
             // 
             btnManagePublishers.FlatStyle = FlatStyle.Popup;
-            btnManagePublishers.Location = new Point(148, 397);
+            btnManagePublishers.Location = new Point(34, 397);
             btnManagePublishers.Name = "btnManagePublishers";
             btnManagePublishers.Size = new Size(132, 23);
             btnManagePublishers.TabIndex = 6;
@@ -96,11 +99,35 @@
             btnManagePublishers.UseVisualStyleBackColor = true;
             btnManagePublishers.Click += btnManagePublishers_Click;
             // 
+            // btnBorrowBook
+            // 
+            btnBorrowBook.FlatStyle = FlatStyle.Popup;
+            btnBorrowBook.Location = new Point(34, 12);
+            btnBorrowBook.Name = "btnBorrowBook";
+            btnBorrowBook.Size = new Size(132, 23);
+            btnBorrowBook.TabIndex = 7;
+            btnBorrowBook.Text = "Borrow book";
+            btnBorrowBook.UseVisualStyleBackColor = true;
+            btnBorrowBook.Click += btnBorrowBook_Click;
+            // 
+            // btnViewBorrowedBooks
+            // 
+            btnViewBorrowedBooks.FlatStyle = FlatStyle.Popup;
+            btnViewBorrowedBooks.Location = new Point(192, 12);
+            btnViewBorrowedBooks.Name = "btnViewBorrowedBooks";
+            btnViewBorrowedBooks.Size = new Size(132, 23);
+            btnViewBorrowedBooks.TabIndex = 8;
+            btnViewBorrowedBooks.Text = "View borrowed books";
+            btnViewBorrowedBooks.UseVisualStyleBackColor = true;
+            btnViewBorrowedBooks.Click += btnViewBorrowedBooks_Click;
+            // 
             // MainForm
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(716, 450);
+            Controls.Add(btnViewBorrowedBooks);
+            Controls.Add(btnBorrowBook);
             Controls.Add(btnManagePublishers);
             Controls.Add(btnManageAuthors);
             Controls.Add(textBoxFilter);
@@ -126,5 +153,7 @@
         private TextBox textBoxFilter;
         private Button btnManageAuthors;
         private Button btnManagePublishers;
+        private Button btnBorrowBook;
+        private Button btnViewBorrowedBooks;
     }
 }
