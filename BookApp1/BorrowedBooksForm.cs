@@ -1,11 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using BookApp1.Classes;
 
@@ -25,7 +18,7 @@ namespace BookApp1 {
             if (dataGridViewBorrowedBooks.Columns.Count == 0) {
                 dataGridViewBorrowedBooks.Columns.Add("Id", "ID");
                 dataGridViewBorrowedBooks.Columns.Add("Title", "Назва");
-                dataGridViewBorrowedBooks.Columns.Add("Isbn", "ISBN"); 
+                dataGridViewBorrowedBooks.Columns.Add("Isbn", "ISBN");
                 dataGridViewBorrowedBooks.Columns.Add("Author", "Автор");
                 dataGridViewBorrowedBooks.Columns.Add("Publisher", "Видавець");
                 dataGridViewBorrowedBooks.Columns.Add("Category", "Категорія");

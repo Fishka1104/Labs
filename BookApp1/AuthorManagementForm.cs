@@ -40,15 +40,23 @@ namespace BookApp1 {
         private void btnSave_Click(object sender, EventArgs e) {
             Author author = listBoxAuthors.SelectedItem as Author ?? new Author();
 
-            author.Name = txtName.Text;
+            author.Name = txtName.Text.Trim();
             author.BirthDate = dtpBirthDate.Checked ? dtpBirthDate.Value : null;
             author.DeathDate = dtpDeathDate.Checked ? dtpDeathDate.Value : null;
-            author.Nationality = txtNationality.Text;
+            author.Nationality = txtNationality.Text.Trim();
             author.Genres = txtGenres.Text.Split(',').Select(g => g.Trim()).ToList();
 
-            if (author.Id == 0) 
+            var validationResults = ValidationService.Validate(author);
+
+            if (validationResults.Any())
+            {
+                MessageBox.Show(string.Join("\n", validationResults.Select(r => r.ErrorMessage)), "Помилка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
+            if (author.Id == 0)
                 authorRepository.CreateAuthor(author);
-            else 
+            else
                 authorRepository.UpdateAuthor(author);
 
             LoadAuthors();

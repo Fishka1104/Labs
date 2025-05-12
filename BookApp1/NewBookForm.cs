@@ -42,29 +42,37 @@ namespace BookApp1 {
         }
 
         private void btnOk_Click(object sender, EventArgs e) {
-            SaveBookData();
-            this.Close();
-        }
-
-        void SaveBookData() {
             var selectedAuthor = (Author)comboBoxAuthors.SelectedItem;
             var selectedPublisher = (Publisher)comboBoxPublishers.SelectedItem;
+
             if (selectedAuthor == null || selectedPublisher == null) {
-                MessageBox.Show("Please select an author and a publisher.");
+                MessageBox.Show("Будь ласка, виберіть автора і видавця.", "Помилка", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
 
-            Book book = new Book {
-                Title = txtTitle.Text,
-                Isbn = new Isbn { Code = txtIsbn.Text },
-                Publisher = selectedPublisher,
-                PublisherId = selectedPublisher.Id,
+            var newBook = new Book {
+                Title = txtTitle.Text.Trim(),
                 Author = selectedAuthor,
                 AuthorId = selectedAuthor.Id,
-                Category = new Category { Name = txtCategory.Text }
+                Publisher = selectedPublisher,
+                PublisherId = selectedPublisher.Id,
+                Category = new Category {
+                    Name = txtCategory.Text.Trim()
+                },
+                Isbn = new Isbn {
+                    Code = txtIsbn.Text.Trim()
+                }
             };
 
-            bookRepository.CreateBook(book);
+            var validationResults = ValidationService.Validate(newBook);
+
+            if (validationResults.Any()) {
+                MessageBox.Show(string.Join("\n", validationResults.Select(r => r.ErrorMessage)), "Помилка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
+            bookRepository.CreateBook(newBook);
+            this.Close();
         }
     }
 }

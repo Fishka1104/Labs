@@ -4,13 +4,10 @@ using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using BookApp1;
 using BookApp1.Classes;
-using BookApp1.Classes.BookApp1.Classes;
 
 
 namespace BookApp1
@@ -64,12 +61,25 @@ namespace BookApp1
 
         private void btnLogin_Click(object sender, EventArgs e)
         {
-            string username = textBoxName.Text;
+            string username = textBoxName.Text.Trim(); // Додаємо Trim, щоб видалити зайві пробіли
             string password = textBoxPassword.Text;
 
-            // Перевірка користувача в репозиторії
-            var user = _userRepository.GetUser(username); // Використовуйте екземпляр _userRepository
-            if (user != null && BCrypt.Net.BCrypt.Verify(password, user.HashedPassword))
+            Console.WriteLine($"Trying to login with username: {username}, password: {password}");
+
+            var user = _userRepository.GetUser(username);
+            if (user == null)
+            {
+                Console.WriteLine($"User {username} not found in database");
+                MessageBox.Show("Неправильне ім'я користувача або пароль", "Помилка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
+            Console.WriteLine($"User found: {user.Username}, HashedPassword: {user.HashedPassword}");
+
+            bool passwordMatch = BCrypt.Net.BCrypt.Verify(password, user.HashedPassword);
+            Console.WriteLine($"Password match: {passwordMatch}");
+
+            if (passwordMatch)
             {
                 UserRole = user.Role;
                 MainForm mainForm = new MainForm(UserRole, user);
