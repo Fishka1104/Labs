@@ -1,7 +1,10 @@
 ﻿using System;
+using System.ComponentModel.DataAnnotations;
+
 
 namespace BookApp1.Classes {
     public class Publisher : BaseEntity {
+        [Required(ErrorMessage = "Назва видавництва обов'язкова")]
         public string Name { get; set; }
         public string Headquarters { get; set; }
         public string Address { get; set; }

@@ -38,15 +38,23 @@ namespace BookApp1 {
         private void btnSave_Click(object sender, EventArgs e) {
             Publisher publisher = listBoxPublishers.SelectedItem as Publisher ?? new Publisher();
 
-            publisher.Name = txtName.Text;
-            publisher.Headquarters = txtHeadquarters.Text;
-            publisher.Address = txtAddress.Text;
+            publisher.Name = txtName.Text.Trim();
+            publisher.Headquarters = txtHeadquarters.Text.Trim();
+            publisher.Address = txtAddress.Text.Trim();
             publisher.Founded = dtpFounded.Checked ? dtpFounded.Value : null;
-            publisher.CeoFounder = txtCeoFounder.Text;
+            publisher.CeoFounder = txtCeoFounder.Text.Trim();
 
-            if (publisher.Id == 0) 
+            var validationResults = ValidationService.Validate(publisher);
+
+            if (validationResults.Any())
+            {
+                MessageBox.Show(string.Join("\n", validationResults.Select(r => r.ErrorMessage)), "Помилка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
+            if (publisher.Id == 0)
                 publisherRepository.CreatePublisher(publisher);
-            else 
+            else
                 publisherRepository.UpdatePublisher(publisher);
 
             LoadPublishers();

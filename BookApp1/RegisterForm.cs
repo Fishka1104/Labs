@@ -8,7 +8,6 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using BookApp1.Classes;
-using BookApp1.Classes.BookApp1.Classes;
 
 namespace BookApp1
 {
@@ -32,7 +31,7 @@ namespace BookApp1
 
         private void btnRegister_Click(object sender, EventArgs e)
         {
-            string username = textBoxUsername.Text;
+            string username = textBoxUsername.Text.Trim();
             string password = textBoxPassword.Text;
             string confirmPassword = textBoxConfirmPassword.Text;
             string role = comboBoxRole.SelectedItem?.ToString();
@@ -43,21 +42,48 @@ namespace BookApp1
                 return;
             }
 
-            if (password != confirmPassword)
+            if (string.IsNullOrWhiteSpace(username))
             {
-                MessageBox.Show("Паролі не співпадають", "Помилка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("Будь ласка, введіть ім'я користувача.", "Помилка", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
 
-            // Хешування пароля
-            string hashedPassword = BCrypt.Net.BCrypt.HashPassword(password);
+            if (string.IsNullOrWhiteSpace(password))
+            {
+                MessageBox.Show("Будь ласка, введіть пароль.", "Помилка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
 
-            // Додавання користувача до репозиторію
-            _userRepository.AddUser(username, hashedPassword, role);
+            if (password != confirmPassword)
+            {
+                MessageBox.Show("Паролі не співпадають.", "Помилка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
 
+            var existingUser = _userRepository.GetUser(username);
+            if (existingUser != null)
+            {
+                MessageBox.Show("Користувач з таким ім'ям вже існує. Виберіть інше ім'я.", "Помилка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
+            var user = new User
+            {
+                Username = username,
+                HashedPassword = BCrypt.Net.BCrypt.HashPassword(password),
+                Role = role
+            };
+
+            var validationResults = ValidationService.Validate(user);
+            if (validationResults.Any())
+            {
+                MessageBox.Show(string.Join("\n", validationResults.Select(r => r.ErrorMessage)), "Помилка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
+            _userRepository.AddUser(user.Username, user.HashedPassword, user.Role);
+            Console.WriteLine($"Registered user: {username}, HashedPassword: {user.HashedPassword}");
             MessageBox.Show("Реєстрація успішна", "Успіх", MessageBoxButtons.OK, MessageBoxIcon.Information);
-
-            // Повернення до форми входу
             this.Close();
         }
     }

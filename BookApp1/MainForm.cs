@@ -1,7 +1,6 @@
 using System;
 using System.Windows.Forms;
-using BookApp1.Classes;
-using BookApp1.Classes.BookApp1.Classes;
+using BookApp1.Classes; 
 
 namespace BookApp1
 {
@@ -14,6 +13,7 @@ namespace BookApp1
         private readonly IAuthorRepository _authorRepository;
         private readonly IPublisherRepository _publisherRepository;
         private readonly UserBorrowedBookRepository _userBorrowedBookRepository;
+       
 
         public MainForm(string role, User activeUser) {
             InitializeComponent();
@@ -21,10 +21,10 @@ namespace BookApp1
             _activeUser = activeUser;
 
             // Створення зберігання для кожного типу даних
-            var bookStorage = new JsonStorage<Book>("books.json");
-            var authorStorage = new JsonStorage<Author>("authors.json");
-            var publisherStorage = new JsonStorage<Publisher>("publishers.json");
-            var userStorage = new JsonStorage<User>("users.json");
+            var bookStorage = new SQLiteStorage<Book>("Books");
+            var authorStorage = new SQLiteStorage<Author>("Authors"); 
+            var publisherStorage = new SQLiteStorage<Publisher>("Publishers"); 
+            var userStorage = new SQLiteStorage<User>("Users"); 
 
             // Створення репозиторіїв
             var authorRepo = new AuthorRepository(authorStorage);
@@ -108,25 +108,23 @@ namespace BookApp1
             List<Book> books = _bookRepository.GetBooks();
 
             var filteredBooks = books.Where(book =>
-                book.Id.ToString().Contains(filterText) ||
                 book.Title.ToLower().Contains(filterText) ||
                 book.Isbn.Code.ToLower().Contains(filterText) ||
-                (book.Author?.Name.ToLower().Contains(filterText) ?? false) ||
-                (book.Publisher?.Name.ToLower().Contains(filterText) ?? false) ||
-                book.Category.Name.ToLower().Contains(filterText)
+                (book.Author?.Name?.ToLower().Contains(filterText) ?? false) || 
+                (book.Publisher?.Name?.ToLower().Contains(filterText) ?? false) || 
+                (book.Category?.Name?.ToLower().Contains(filterText) ?? false) 
             ).ToList();
 
             dataGridViewBooks.Rows.Clear();
-
             foreach (var book in filteredBooks)
             {
                 dataGridViewBooks.Rows.Add(
                     book.Id,
                     book.Title,
                     book.Isbn.Code,
-                    book.Author?.Name,
-                    book.Publisher?.Name,
-                    book.Category.Name
+                    book.Author?.Name ?? "Unknown", 
+                    book.Publisher?.Name ?? "Unknown",
+                    book.Category?.Name ?? "Unknown" 
                 );
             }
         }

@@ -53,17 +53,33 @@ namespace BookApp1 {
             var selectedAuthor = (Author)comboBoxAuthors.SelectedItem;
             var selectedPublisher = (Publisher)comboBoxPublishers.SelectedItem;
             if (selectedAuthor == null || selectedPublisher == null) {
-                MessageBox.Show("Please select an author and a publisher.");
+                MessageBox.Show("Будь ласка, виберіть автора і видавця.", "Помилка", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
 
-            currentBook.Title = txtTitle.Text;
-            currentBook.Isbn.Code = txtIsbn.Text;
+            currentBook.Title = txtTitle.Text.Trim();
+
+            if (currentBook.Isbn == null) {
+                currentBook.Isbn = new Isbn();
+            }
+            currentBook.Isbn.Code = txtIsbn.Text.Trim();
+
             currentBook.Publisher = selectedPublisher;
             currentBook.PublisherId = selectedPublisher.Id;
             currentBook.Author = selectedAuthor;
             currentBook.AuthorId = selectedAuthor.Id;
-            currentBook.Category.Name = txtCategory.Text;
+
+            if (currentBook.Category == null) {
+                currentBook.Category = new Category();
+            }
+            currentBook.Category.Name = txtCategory.Text.Trim();
+
+            var validationResults = ValidationService.Validate(currentBook);
+
+            if (validationResults.Any()) {
+                MessageBox.Show(string.Join("\n", validationResults.Select(r => r.ErrorMessage)), "Помилка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
 
             bookRepository.EditBook(currentBook);
             this.Close();
