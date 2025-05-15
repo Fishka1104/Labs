@@ -9,8 +9,10 @@ namespace BookApp1.Classes {
         private readonly string _connectionString = "Data Source=library.db;Version=3;";
         private readonly string _tableName;
 
-        public SQLiteStorage(string tableName) {
+        public SQLiteStorage(string tableName, string connectionString = "Data Source=library.db;Version=3;")
+        {
             _tableName = tableName;
+            _connectionString = connectionString;
             InitializeDatabase();
         }
 
@@ -35,35 +37,36 @@ namespace BookApp1.Classes {
                 }
             } catch (SQLiteException ex) {
                 Console.WriteLine($"SQLite error in InitializeDatabase: {ex.Message}");
-                throw; // Re-throw to catch issues early
+                throw; 
             }
         }
 
-        public void Add(T entity) {
-            try {
-                using (var connection = new SQLiteConnection(_connectionString)) {
-                    connection.Open();
-                    string query = GetInsertQuery(entity);
-                    Console.WriteLine($"Executing query: {query}");
-                    using (var command = new SQLiteCommand(query, connection)) {
-                        AddParameters(command, entity);
-                        int rowsAffected = command.ExecuteNonQuery();
-                        Console.WriteLine($"Rows affected: {rowsAffected}");
-                        if (rowsAffected > 0) {
-                            entity.Id = (int)connection.LastInsertRowId;
-                            Console.WriteLine($"Assigned ID: {entity.Id}");
-                        } else {
-                            Console.WriteLine("Failed to insert entity.");
-                            throw new SQLiteException("No rows affected during insert.");
-                        }
+        public void Add(T entity)
+        {
+            if (entity == null)
+            {
+                throw new ArgumentNullException(nameof(entity), "Entity cannot be null.");
+            }
+
+            using (var connection = new SQLiteConnection(_connectionString))
+            {
+                connection.Open();
+                string query = GetInsertQuery(entity);
+                using (var command = new SQLiteCommand(query, connection))
+                {
+                    AddParameters(command, entity);
+                    int rowsAffected = command.ExecuteNonQuery();
+                    Console.WriteLine($"Rows affected by Add: {rowsAffected}");
+                    if (rowsAffected > 0)
+                    {
+                        entity.Id = (int)connection.LastInsertRowId;
+                        Console.WriteLine($"New ID assigned: {entity.Id}");
+                    }
+                    else
+                    {
+                        Console.WriteLine("No rows affected. Insertion failed.");
                     }
                 }
-            } catch (SQLiteException ex) {
-                Console.WriteLine($"SQLite error in Add: {ex.Message}");
-                throw; // Re-throw to propagate error
-            } catch (Exception ex) {
-                Console.WriteLine($"General error in Add: {ex.Message}");
-                throw;
             }
         }
 
@@ -86,7 +89,7 @@ namespace BookApp1.Classes {
                 }
             } catch (SQLiteException ex) {
                 Console.WriteLine($"SQLite error in Update: {ex.Message}");
-                throw; // Re-throw to propagate error
+                throw; 
             } catch (Exception ex) {
                 Console.WriteLine($"General error in Update: {ex.Message}");
                 throw;
@@ -156,7 +159,7 @@ namespace BookApp1.Classes {
         }
 
         public void Save() {
-            // No-op, as changes are committed immediately
+            
         }
 
         private string GetInsertQuery(T entity) {
